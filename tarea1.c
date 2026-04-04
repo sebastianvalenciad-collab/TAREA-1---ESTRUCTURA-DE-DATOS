@@ -161,10 +161,16 @@ void registrar_pendiente(List *tareas, List *categorias, Hora hora_actual)
 void mostrar_tablero(List *tareas)
 {
   Tarea* primera = list_first(tareas);
+  if(primera == NULL)
+  {
+    printf("No hay tareas pendientes!\n");
+    return;
+  }
   while(primera != NULL)
   {
     printf("Categoria: %s\n",primera->categoria->nombre);
     printf("Descripcion: %s\n", primera->descripcion);
+    printf("Hora: %d - %d\n",primera->hora.hora, primera->hora.minutos);
     printf("\n");
     primera = list_next(tareas);
   }
@@ -180,11 +186,83 @@ void atender_siguiente(List *tareas)
   }
   printf("Categoria: %s\n",primera->categoria->nombre);
   printf("Descripcion: %s\n", primera->descripcion);
-  printf("Hora: \n");
+  printf("Hora: %d - %d\n",primera->hora.hora, primera->hora.minutos);
   printf("\n");
   list_popFront(tareas);
   free(primera->descripcion);
   free(primera);
+}
+
+void sumar_hora(Hora *actual)
+{
+  actual->minutos += 5;
+  if(actual->minutos == 60)
+  {
+    actual->minutos = 0;
+    actual->hora += 1;
+    if(actual->hora == 25)
+    {
+      actual->hora = 0;
+    }
+  }
+}
+
+bool verificar_categoria(char *nombre, List *categorias)
+{
+  Categoria* primera = list_first(categorias);
+  while(primera != NULL)
+  {
+    if(strcmp(primera->nombre, nombre) == 0)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+void filtrar_categorias(List *tareas, List *categorias)
+{
+  Categoria* primera = list_first(categorias);
+  if(primera == NULL)
+  {
+    printf("No hay categorias registradas.\n");
+    return;
+  }
+  printf("Categorias disponibles:\n");
+  printf("\n");
+  while(primera != NULL)
+  {
+    printf(" - %s\n", primera->nombre);
+    primera = list_next(categorias);
+  }
+  printf("\n");
+  
+  char nombreCategoria[256];
+  printf("Ingresar nombre de la categoria que deseas filtrar: ");
+  scanf(" %[^\n]", nombreCategoria);
+
+  if(verificar_categoria(nombreCategoria, categorias))
+  {
+    printf("\n");
+    int contador = 0;
+    Tarea* first = list_first(tareas);
+    while(first != NULL)
+    {
+      if(strcmp(nombreCategoria, first->categoria->nombre) == 0)
+      {
+        printf(" - Descripcion: %s\n", first->descripcion);
+        printf(" - Hora: %d - %d\n", first->hora.hora, first->hora.minutos);
+        printf("\n");
+        contador += 1;
+      }
+      first = list_next(tareas);
+    }
+    if(contador == 0)
+    {
+      printf("No hay pendientes registradas con esta categoria.\n");
+    }
+  }
+  
 }
 
 int main() {
@@ -192,8 +270,8 @@ int main() {
   List *categorias = list_create(); // Lista para almacenar categorías
   List *tareas = list_create(); // Lista que usaremos como cola, osea agregaremos al final de esta
   Hora hora_actual; 
-  hora_actual.hora = 0; // Durante la ejecucion del codigo, cada vez que termine una operacion se
-  hora_actual.minutos = 0; // le sum 1 a minuto hastas llegar a 60, ahi se reinicia y se suma 1 a hora
+  hora_actual.hora = 8; // Durante la ejecucion del codigo, cada vez que termine una operacion se
+  hora_actual.minutos = 0; // le sum 5 minutos hastas llegar a 60, ahi se reinicia y se suma 1 a hora
   
   do {
     mostrarMenuPrincipal();
@@ -204,25 +282,31 @@ int main() {
     switch (opcion) {
     case '1':
       registrar_categorias(categorias);
+      sumar_hora(&hora_actual);
       break;
     case '2':
       eliminar_categoria(categorias, tareas);
+      sumar_hora(&hora_actual);
       break;
     case '3':
       mostrar_categorias(categorias);
+      sumar_hora(&hora_actual);
       break;
     case '4':
       registrar_pendiente(tareas, categorias, hora_actual);
-      // crear funcion para actualizar la hora
+      sumar_hora(&hora_actual);
       break;
     case '5':
-      atender_siguiente(tareas);      
+      atender_siguiente(tareas);
+      sumar_hora(&hora_actual);
       break;
     case '6':
       mostrar_tablero(tareas);
+      sumar_hora(&hora_actual);
       break;
     case '7':
-      // Lógica para filtrar por categoría
+      filtrar_categorias(tareas, categorias);
+      sumar_hora(&hora_actual);
       break;
     case '8':
       puts("Saliendo del sistema de gestión hospitalaria...");
