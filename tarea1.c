@@ -17,7 +17,7 @@ typedef struct
 
 typedef struct 
 {
-  char *nombre;
+  char *descripcion;
   Categoria* categoria;
   Hora hora;
 } Tarea;
@@ -78,7 +78,24 @@ void mostrar_categorias(List *categorias) {
   }
 }
 
-void eliminar_categoria(List *categorias)
+void eliminar_tareas(List *tareas, char *nombre)
+{
+  Tarea* primera = list_first(tareas);
+  while(primera != NULL)
+  {
+    if(strcmp(primera->categoria->nombre,nombre) == 0)
+    {
+      free(primera->descripcion);
+      free(primera);
+      list_popCurrent(tareas);
+      primera = list_next(tareas);
+    }
+    primera = list_next(tareas);
+  }
+    
+}
+
+void eliminar_categoria(List *categorias, List *tareas)
 {
   char nombre[256];
   printf("Ingresar Categoria que deseas eliminar: ");
@@ -89,6 +106,7 @@ void eliminar_categoria(List *categorias)
   {
     if(strcmp(primera->nombre, nombre) == 0) // comparamos si son iguales
     {
+      eliminar_tareas(tareas, nombre);
       free(primera->nombre); // Liberamos memoria
       free(primera);
       list_popCurrent(categorias);
@@ -100,9 +118,73 @@ void eliminar_categoria(List *categorias)
   printf("Esa Categoria no existe.\n");
 }
 
-void registrar_pendiente(List *tareas, list* categorias, Hora *hora_actual)
+void registrar_pendiente(List *tareas, List *categorias, Hora hora_actual)
 {
+  char descripcion[256];
+  printf("Ingresar Descripcion de la tarea: ");
+  scanf(" %[^\n]", descripcion);
+
+  char nombreCategoria[256];
+  printf("Ingresar Categoria de la tarea: ");
+  scanf(" %[^\n]", nombreCategoria);
+
+  Categoria *primera = list_first(categorias);
+  Categoria *elegida= NULL;
+
+  while(primera != NULL)
+  {
+    if(strcmp(primera->nombre, nombreCategoria) == 0)
+    {
+      elegida = primera;
+      break;
+    }
+    primera = list_next(categorias);
+  }
+
+  if(elegida == NULL)
+  {
+    printf("%s no es una categoria valida.\n", nombreCategoria);
+    return;
+  }
   
+  // Agregamos la descripcion
+  Tarea* pendiente = malloc(sizeof(Tarea));
+  pendiente->descripcion = malloc(strlen(descripcion) + 1);
+  strcpy(pendiente->descripcion, descripcion);
+
+  pendiente->categoria = elegida;
+  pendiente->hora = hora_actual;
+  list_pushBack(tareas, pendiente);
+  printf("Tarea agregada correctamente.\n");
+}
+
+void mostrar_tablero(List *tareas)
+{
+  Tarea* primera = list_first(tareas);
+  while(primera != NULL)
+  {
+    printf("Categoria: %s\n",primera->categoria->nombre);
+    printf("Descripcion: %s\n", primera->descripcion);
+    printf("\n");
+    primera = list_next(tareas);
+  }
+}
+
+void atender_siguiente(List *tareas)
+{
+  Tarea* primera = list_first(tareas);
+  if(primera == NULL)
+  {
+    printf("¡Libre de pendientes!\n");
+    return;
+  }
+  printf("Categoria: %s\n",primera->categoria->nombre);
+  printf("Descripcion: %s\n", primera->descripcion);
+  printf("Hora: \n");
+  printf("\n");
+  list_popFront(tareas);
+  free(primera->descripcion);
+  free(primera);
 }
 
 int main() {
@@ -111,7 +193,7 @@ int main() {
   List *tareas = list_create(); // Lista que usaremos como cola, osea agregaremos al final de esta
   Hora hora_actual; 
   hora_actual.hora = 0; // Durante la ejecucion del codigo, cada vez que termine una operacion se
-  hora_actual.minuto = 0; // le sum 1 a minuto hastas llegar a 60, ahi se reinicia y se suma 1 a hora
+  hora_actual.minutos = 0; // le sum 1 a minuto hastas llegar a 60, ahi se reinicia y se suma 1 a hora
   
   do {
     mostrarMenuPrincipal();
@@ -124,19 +206,20 @@ int main() {
       registrar_categorias(categorias);
       break;
     case '2':
-      eliminar_categoria(categorias);
+      eliminar_categoria(categorias, tareas);
       break;
     case '3':
       mostrar_categorias(categorias);
       break;
     case '4':
       registrar_pendiente(tareas, categorias, hora_actual);
+      // crear funcion para actualizar la hora
       break;
     case '5':
-      // Lógica para atender al siguiente paciente
+      atender_siguiente(tareas);      
       break;
     case '6':
-      // Lógica para mostrar el tablero general
+      mostrar_tablero(tareas);
       break;
     case '7':
       // Lógica para filtrar por categoría
