@@ -69,8 +69,16 @@ void registrar_categorias(List *categorias)
 
 void mostrar_categorias(List *categorias) {
   // Mostrar categorías
-  printf("Categorías:\n");
   Categoria* primera = list_first(categorias);
+
+  if(primera == NULL)
+  {
+    printf("No hay categorias registradas.\n");
+    return;
+  }
+  
+  printf("Categorías:\n");
+  printf("\n");
   while(primera != NULL)
   {
     printf("  - %s\n", primera->nombre);
