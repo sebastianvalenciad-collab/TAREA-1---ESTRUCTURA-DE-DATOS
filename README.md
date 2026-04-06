@@ -1,5 +1,6 @@
 ## Código de tarea1
-Para ejecutar la tarea1 primero debemos compilar (en la carpeta raíz)
+Yo estoy realizando la tarea en replit asi que les explicare como hacerlo funcionar en esta plataforma.
+Para ejecutar la tarea1 primero debemos seguir los siguientes pasos:
 
 1. Accede al repositorio de este codigo, y crea un nuevo repositorio usando el template
 2. Coloca en la opción Import code or design. Luego importa desde Github.
