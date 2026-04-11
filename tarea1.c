@@ -89,18 +89,22 @@ void mostrar_categorias(List *categorias) {
 void eliminar_tareas(List *tareas, char *nombre)
 {
   Tarea* primera = list_first(tareas);
+  
   while(primera != NULL)
-  {
+  {    
     if(strcmp(primera->categoria->nombre,nombre) == 0)
     {
-      free(primera->descripcion);
-      free(primera);
-      list_popCurrent(tareas);
+      Tarea* borrar = list_popCurrent(tareas);
+      free(borrar->descripcion);
+      free(borrar);
+      primera = list_first(tareas);
+    }
+    else
+    {
       primera = list_next(tareas);
     }
-    primera = list_next(tareas);
+
   }
-    
 }
 
 void eliminar_categoria(List *categorias, List *tareas)
