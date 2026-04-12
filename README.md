@@ -1,5 +1,8 @@
-## Código de tarea1
-Yo estoy realizando la tarea en replit asi que les explicare como hacerlo funcionar en esta plataforma.
+## Descripcion
+Este programa permite a los usuarios gestionar sus pendientes, ayudándolos a optimizar su tiempo. En él, se puede elegir la categoría a la cual pertenece cada tarea, así como registrar nuevos pendientes. Además, permite visualizar todas las tareas y categorías ingresadas, y también eliminar tanto tareas como categorías.
+
+## Como ejecutar el codigo
+Este programa fue realizado en replit asi que les explicare como hacerlo funcionar en esta plataforma.
 Para ejecutar la tarea1 primero debemos seguir los siguientes pasos:
 
 1. Accede al repositorio de este codigo, y crea un nuevo repositorio usando el template
