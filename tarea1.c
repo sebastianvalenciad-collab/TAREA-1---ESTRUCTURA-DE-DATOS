@@ -86,6 +86,7 @@ void mostrar_categorias(List *categorias) {
   }
 }
 
+
 void eliminar_tareas(List *tareas, char *nombre)
 {
   Tarea* primera = list_first(tareas);
@@ -106,6 +107,7 @@ void eliminar_tareas(List *tareas, char *nombre)
 
   }
 }
+
 
 void eliminar_categoria(List *categorias, List *tareas)
 {
@@ -321,7 +323,7 @@ int main() {
       sumar_hora(&hora_actual);
       break;
     case '8':
-      puts("Saliendo del sistema de gestión hospitalaria...");
+      puts("Saliendo del programa");
       break;
     default:
       puts("Opción no válida. Por favor, intente de nuevo.");
